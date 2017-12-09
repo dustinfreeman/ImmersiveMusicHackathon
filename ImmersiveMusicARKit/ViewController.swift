@@ -31,7 +31,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, SCNPhysicsContactDele
         
         sceneView.scene.physicsWorld.contactDelegate = self
         
-        let povCollisionSphere = SCNNode.init(geometry:SCNSphere.init(radius: 0.04))
+        let povCollisionSphere = SCNNode.init(geometry:SCNSphere.init(radius: 0.08))
         povCollisionSphere.geometry?.firstMaterial?.diffuse.contents = UIColor.white
         //when uncommented, its centered on the POV itself, making the device a percussion instrument.
 //        povCollisionSphere.position = SCNVector3(0, 0, -0.5)
@@ -52,9 +52,14 @@ class ViewController: UIViewController, ARSCNViewDelegate, SCNPhysicsContactDele
     }
     
     func addRandomObjs() {
+        var lickColours: [UIColor] = []
+        for _ in 0..<lickAudioSources.count {
+            lickColours.append(randColour())
+        }
+        
         var lickIndex = 0
         for x in -5...5 {
-            for y in -5...5 {
+            for y in -1...(-1) {
                 for z in -5...5 {
                     if x == 0 && y == 0 && z == 0 {
                         //IGNORE THE START POSITION
@@ -63,8 +68,8 @@ class ViewController: UIViewController, ARSCNViewDelegate, SCNPhysicsContactDele
                     
                     let node = Instrument.init(audioSource: lickAudioSources[lickIndex])
                     node.geometry = SCNSphere.init(radius: 0.04)
-                    node.geometry?.firstMaterial?.diffuse.contents = randColour()
-                    let shrink = Float(0.4)
+                    node.geometry?.firstMaterial?.diffuse.contents = lickColours[lickIndex]
+                    let shrink = Float(0.2)
                     node.position = SCNVector3(shrink*Float(x), shrink*Float(y), shrink*Float(z))
                     node.physicsBody = SCNPhysicsBody.init(type: SCNPhysicsBodyType.kinematic, shape: nil)
                     node.physicsBody?.categoryBitMask = 1
