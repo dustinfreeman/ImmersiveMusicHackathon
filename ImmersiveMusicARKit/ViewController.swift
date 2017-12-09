@@ -76,7 +76,11 @@ class ViewController: UIViewController, ARSCNViewDelegate, SCNPhysicsContactDele
                     node.physicsBody?.collisionBitMask = 1
                     node.physicsBody?.contactTestBitMask = 1
                     node.name = "instrument"
-                    node.particleSystems[0]!
+                    if let particleSystem = SCNParticleSystem.init(named: "PlayingParticleSystem.scnp", inDirectory: "art.scnassets") {
+                        particleSystem.particleColor = lickColours[lickIndex]
+                        particleSystem.birthRate = 0
+                        node.addParticleSystem(particleSystem)
+                    }
                     sceneView.scene.rootNode.addChildNode(node)
                     
                     lickIndex = (lickIndex + 1) % lickAudioSources.count
@@ -205,6 +209,13 @@ class ViewController: UIViewController, ARSCNViewDelegate, SCNPhysicsContactDele
         if let source = instrument?.audioSource {
             let audio = SCNAudioPlayer.init(source: source)
             instrument?.addAudioPlayer(audio)
+            
+            if let particleSystem = instrument?.particleSystems?.first {
+                particleSystem.birthRate = 50
+                audio.didFinishPlayback = {
+                    particleSystem.birthRate = 0
+                }
+            }
         }
         
     }
