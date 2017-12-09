@@ -56,6 +56,11 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         }
     }
     
+    var testAudioSource: SCNAudioSource!
+    func loadAudioAssets() {
+        testAudioSource = SCNAudioSource.init(named: "art.scnassets/beltHandle1.mp3")
+    }
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
@@ -101,6 +106,28 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     
     func sessionInterruptionEnded(_ session: ARSession) {
         // Reset tracking and/or remove existing anchors if consistent tracking is required
+        
+    }
+    
+    func renderer(_ renderer: SCNSceneRenderer, updateAtTime time: TimeInterval) {
+        guard let pov = sceneView.pointOfView else {
+            return
+        }
+        
+        struct LastTime {
+            static var position: SCNVector3 = SCNVector3Zero
+        }
+        
+        let deltaPosition = pov.position - LastTime.position
+        LastTime.position = pov.position
+
+        print(pov.position)
+        
+        if pov.position.y > 0.15 && deltaPosition.y > 0 {
+            print("play audio")
+            let audio = SCNAudioPlayer.init(source: testAudioSource)
+            pov.addAudioPlayer(audio)
+        }
         
     }
 }
