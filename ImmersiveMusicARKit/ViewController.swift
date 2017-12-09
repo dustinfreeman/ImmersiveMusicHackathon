@@ -25,9 +25,9 @@ class ViewController: UIViewController, ARSCNViewDelegate, SCNPhysicsContactDele
 
         sceneView.debugOptions = [ARSCNDebugOptions.showFeaturePoints, ARSCNDebugOptions.showWorldOrigin]
     
-        addRandomObjs()
-        
         loadAudioAssets()
+        
+        addRandomObjs()
         
         sceneView.scene.physicsWorld.contactDelegate = self
         
@@ -52,10 +52,12 @@ class ViewController: UIViewController, ARSCNViewDelegate, SCNPhysicsContactDele
     }
     
     func addRandomObjs() {
+        
         for x in -5...5 {
             for y in -5...5 {
                 for z in -5...5 {
-                    let node = SCNNode.init(geometry: SCNSphere.init(radius: 0.04))
+                    let node = Instrument.init(audioSource: testAudioSource)
+                    node.geometry = SCNSphere.init(radius: 0.04)
                     node.geometry?.firstMaterial?.diffuse.contents = randColour()
                     let shrink = Float(0.4)
                     node.position = SCNVector3(shrink*Float(x), shrink*Float(y), shrink*Float(z))
@@ -144,15 +146,17 @@ class ViewController: UIViewController, ARSCNViewDelegate, SCNPhysicsContactDele
     }
     
     func physicsWorld(_ world: SCNPhysicsWorld, didBegin contact: SCNPhysicsContact) {
-        print("contact " + String.init(describing:contact.nodeA) + " <-> " + String.init(describing:contact.nodeB))
+        print("contact " + String.init(describing:contact.nodeA.name) + " <-> " + String.init(describing:contact.nodeB.name))
         
-        let instrument = (contact.nodeA.name == "instrument") ? contact.nodeA : contact.nodeB
+        let instrument = contact.nodeA is Instrument ? contact.nodeA as? Instrument : contact.nodeB as? Instrument
         
         //interrupt other playback
-        instrument.removeAllAudioPlayers()
+        instrument?.removeAllAudioPlayers()
 
-        let audio = SCNAudioPlayer.init(source: testAudioSource)
-        instrument.addAudioPlayer(audio)
+        if let source = instrument?.audioSource {
+            let audio = SCNAudioPlayer.init(source: source)
+            instrument?.addAudioPlayer(audio)
+        }
         
     }
 }

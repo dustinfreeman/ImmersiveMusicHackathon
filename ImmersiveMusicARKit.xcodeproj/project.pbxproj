@@ -14,6 +14,7 @@
 		77A101B41FDC4A7F00574A4A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 77A101B31FDC4A7F00574A4A /* Assets.xcassets */; };
 		77A101B71FDC4A7F00574A4A /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 77A101B51FDC4A7F00574A4A /* LaunchScreen.storyboard */; };
 		77A101C11FDC761F00574A4A /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77A101C01FDC761F00574A4A /* Extensions.swift */; };
+		77A101C31FDC8A2100574A4A /* Instrument.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77A101C21FDC8A2100574A4A /* Instrument.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -26,6 +27,7 @@
 		77A101B61FDC4A7F00574A4A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		77A101B81FDC4A7F00574A4A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		77A101C01FDC761F00574A4A /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
+		77A101C21FDC8A2100574A4A /* Instrument.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Instrument.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -66,6 +68,7 @@
 				77A101B51FDC4A7F00574A4A /* LaunchScreen.storyboard */,
 				77A101B81FDC4A7F00574A4A /* Info.plist */,
 				77A101C01FDC761F00574A4A /* Extensions.swift */,
+				77A101C21FDC8A2100574A4A /* Instrument.swift */,
 			);
 			path = ImmersiveMusicARKit;
 			sourceTree = "<group>";
@@ -143,6 +146,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				77A101C31FDC8A2100574A4A /* Instrument.swift in Sources */,
 				77A101AF1FDC4A7F00574A4A /* ViewController.swift in Sources */,
 				77A101C11FDC761F00574A4A /* Extensions.swift in Sources */,
 				77A101AB1FDC4A7F00574A4A /* AppDelegate.swift in Sources */,
