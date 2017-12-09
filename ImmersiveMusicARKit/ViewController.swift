@@ -73,8 +73,11 @@ class ViewController: UIViewController, ARSCNViewDelegate, SCNPhysicsContactDele
     }
     
     var testAudioSource: SCNAudioSource!
+    var backBeatAudioSource: SCNAudioSource!
     func loadAudioAssets() {
         testAudioSource = SCNAudioSource.init(named: "art.scnassets/beltHandle1.mp3")
+        backBeatAudioSource = SCNAudioSource.init(named: "art.scnassets/Breakbeat-135.aif")
+        backBeatAudioSource.loops = true
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -92,6 +95,24 @@ class ViewController: UIViewController, ARSCNViewDelegate, SCNPhysicsContactDele
         
         // Pause the view's session
         sceneView.session.pause()
+    }
+    
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        toggleBackBeat()
+    }
+    
+    func toggleBackBeat() {
+        guard let pov = sceneView?.pointOfView else {
+            return
+        }
+        
+        if pov.audioPlayers.count > 0 {
+            pov.removeAllAudioPlayers()
+            return
+        }
+        
+        let backBeatPlayer = SCNAudioPlayer.init(source: backBeatAudioSource)
+        pov.addAudioPlayer(backBeatPlayer)
     }
     
     override func didReceiveMemoryWarning() {
