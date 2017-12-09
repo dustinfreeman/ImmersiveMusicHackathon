@@ -22,12 +22,38 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         
         // Show statistics such as fps and timing information
         sceneView.showsStatistics = true
-        
+
+        sceneView.debugOptions = [ARSCNDebugOptions.showFeaturePoints, ARSCNDebugOptions.showWorldOrigin]
+
         // Create a new scene
         let scene = SCNScene(named: "art.scnassets/ship.scn")!
         
         // Set the scene to the view
         sceneView.scene = scene
+    
+        addRandomObjs()
+    }
+    
+    func randFloat() -> CGFloat {
+        return CGFloat(Float(arc4random()) / Float(UINT32_MAX))
+    }
+    
+    func randColour() -> UIColor {
+        return UIColor.init(red: randFloat(), green: randFloat(), blue: randFloat(), alpha: 1)
+    }
+    
+    func addRandomObjs() {
+        for x in -5...5 {
+            for y in -5...5 {
+                for z in -5...5 {
+                    let node = SCNNode.init(geometry: SCNSphere.init(radius: 0.08))
+                    node.geometry?.firstMaterial?.diffuse.contents = randColour()
+                    let shrink = Float(0.4)
+                    node.position = SCNVector3(shrink*Float(x), shrink*Float(y), shrink*Float(z))
+                    sceneView.scene.rootNode.addChildNode(node)
+                }
+            }
+        }
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -35,7 +61,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         
         // Create a session configuration
         let configuration = ARWorldTrackingConfiguration()
-
+        
         // Run the view's session
         sceneView.session.run(configuration)
     }
