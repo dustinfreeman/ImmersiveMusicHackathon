@@ -52,11 +52,16 @@ class ViewController: UIViewController, ARSCNViewDelegate, SCNPhysicsContactDele
     }
     
     func addRandomObjs() {
-        
+        var lickIndex = 0
         for x in -5...5 {
             for y in -5...5 {
                 for z in -5...5 {
-                    let node = Instrument.init(audioSource: testAudioSource)
+                    if x == 0 && y == 0 && z == 0 {
+                        //IGNORE THE START POSITION
+                        continue
+                    }
+                    
+                    let node = Instrument.init(audioSource: lickAudioSources[lickIndex])
                     node.geometry = SCNSphere.init(radius: 0.04)
                     node.geometry?.firstMaterial?.diffuse.contents = randColour()
                     let shrink = Float(0.4)
@@ -67,6 +72,8 @@ class ViewController: UIViewController, ARSCNViewDelegate, SCNPhysicsContactDele
                     node.physicsBody?.contactTestBitMask = 1
                     node.name = "instrument"
                     sceneView.scene.rootNode.addChildNode(node)
+                    
+                    lickIndex = (lickIndex + 1) % lickAudioSources.count
                 }
             }
         }
@@ -74,10 +81,25 @@ class ViewController: UIViewController, ARSCNViewDelegate, SCNPhysicsContactDele
     
     var testAudioSource: SCNAudioSource!
     var backBeatAudioSource: SCNAudioSource!
+    var lickAudioSources: [SCNAudioSource] = []
     func loadAudioAssets() {
         testAudioSource = SCNAudioSource.init(named: "art.scnassets/beltHandle1.mp3")
         backBeatAudioSource = SCNAudioSource.init(named: "art.scnassets/Breakbeat-135.aif")
         backBeatAudioSource.loops = true
+        
+        let lickFiles = ["Breakbeat Paradise Sample - Bigband Horns 04.mp3",
+                         "Breakbeat Paradise Sample - Bigband Horns 06.mp3",
+                         "Breakbeat Paradise Sample - Bigband Horns 08.mp3",
+                         "Breakbeat Paradise Sample - Jazzy Saxlines   02.mp3",
+                         "Breakbeat Paradise Sample - Jazzy Saxlines   04.mp3",
+                         "Breakbeat Paradise Sample - Jazzy Saxlines   05.mp3",
+                         "Breakbeat Paradise Sample - Jazzy Saxlines   06.mp3"]
+        for file in lickFiles {
+            guard let source = SCNAudioSource.init(named: "art.scnassets/" + file) else {
+                continue
+            }
+            lickAudioSources.append(source)
+        }
     }
     
     override func viewWillAppear(_ animated: Bool) {
