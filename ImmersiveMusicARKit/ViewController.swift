@@ -76,6 +76,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, SCNPhysicsContactDele
                     node.physicsBody?.collisionBitMask = 1
                     node.physicsBody?.contactTestBitMask = 1
                     node.name = "instrument"
+                    node.particleSystems[0]!
                     sceneView.scene.rootNode.addChildNode(node)
                     
                     lickIndex = (lickIndex + 1) % lickAudioSources.count
