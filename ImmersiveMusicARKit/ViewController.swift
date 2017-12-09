@@ -38,11 +38,13 @@ class ViewController: UIViewController, ARSCNViewDelegate, SCNPhysicsContactDele
         
         let povCollisionSphere = SCNNode.init(geometry:SCNSphere.init(radius: 0.04))
         povCollisionSphere.geometry?.firstMaterial?.diffuse.contents = UIColor.white
-        povCollisionSphere.position = SCNVector3(0, 0, -0.5)
+        //when uncommented, its centered on the POV itself, making the device a percussion instrument.
+//        povCollisionSphere.position = SCNVector3(0, 0, -0.5)
         povCollisionSphere.physicsBody = SCNPhysicsBody.init(type: SCNPhysicsBodyType.kinematic, shape: nil)
         povCollisionSphere.physicsBody?.categoryBitMask = 1
         povCollisionSphere.physicsBody?.collisionBitMask = 1
         povCollisionSphere.physicsBody?.contactTestBitMask = 1
+        povCollisionSphere.name = "povCollisionSphere"
         sceneView.pointOfView?.addChildNode(povCollisionSphere)
     }
     
@@ -66,6 +68,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, SCNPhysicsContactDele
                     node.physicsBody?.categoryBitMask = 1
                     node.physicsBody?.collisionBitMask = 1
                     node.physicsBody?.contactTestBitMask = 1
+                    node.name = "instrument"
                     sceneView.scene.rootNode.addChildNode(node)
                 }
             }
@@ -136,8 +139,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, SCNPhysicsContactDele
         
         let deltaPosition = pov.position - LastTime.position
         LastTime.position = pov.position
-
-        print(pov.position)
+//        print(pov.position)
         
 //        if pov.position.y > 0.15 && deltaPosition.y > 0 {
 //            let audio = SCNAudioPlayer.init(source: testAudioSource)
@@ -147,9 +149,15 @@ class ViewController: UIViewController, ARSCNViewDelegate, SCNPhysicsContactDele
     }
     
     func physicsWorld(_ world: SCNPhysicsWorld, didBegin contact: SCNPhysicsContact) {
-        print("contact")
+        print("contact " + String.init(describing:contact.nodeA) + " <-> " + String.init(describing:contact.nodeB))
         
+        let instrument = (contact.nodeA.name == "instrument") ? contact.nodeA : contact.nodeB
+        
+        //interrupt other playback
+        instrument.removeAllAudioPlayers()
+
         let audio = SCNAudioPlayer.init(source: testAudioSource)
-        sceneView.pointOfView?.addAudioPlayer(audio)
+        instrument.addAudioPlayer(audio)
+        
     }
 }
