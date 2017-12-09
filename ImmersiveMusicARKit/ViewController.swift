@@ -10,7 +10,7 @@ import UIKit
 import SceneKit
 import ARKit
 
-class ViewController: UIViewController, ARSCNViewDelegate {
+class ViewController: UIViewController, ARSCNViewDelegate, SCNPhysicsContactDelegate {
 
     @IBOutlet var sceneView: ARSCNView!
     
@@ -33,6 +33,17 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         addRandomObjs()
         
         loadAudioAssets()
+        
+        sceneView.scene.physicsWorld.contactDelegate = self
+        
+        let povCollisionSphere = SCNNode.init(geometry:SCNSphere.init(radius: 0.04))
+        povCollisionSphere.geometry?.firstMaterial?.diffuse.contents = UIColor.white
+        povCollisionSphere.position = SCNVector3(0, 0, -0.5)
+        povCollisionSphere.physicsBody = SCNPhysicsBody.init(type: SCNPhysicsBodyType.kinematic, shape: nil)
+        povCollisionSphere.physicsBody?.categoryBitMask = 1
+        povCollisionSphere.physicsBody?.collisionBitMask = 1
+        povCollisionSphere.physicsBody?.contactTestBitMask = 1
+        sceneView.pointOfView?.addChildNode(povCollisionSphere)
     }
     
     func randFloat() -> CGFloat {
@@ -47,10 +58,14 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         for x in -5...5 {
             for y in -5...5 {
                 for z in -5...5 {
-                    let node = SCNNode.init(geometry: SCNSphere.init(radius: 0.08))
+                    let node = SCNNode.init(geometry: SCNSphere.init(radius: 0.04))
                     node.geometry?.firstMaterial?.diffuse.contents = randColour()
                     let shrink = Float(0.4)
                     node.position = SCNVector3(shrink*Float(x), shrink*Float(y), shrink*Float(z))
+                    node.physicsBody = SCNPhysicsBody.init(type: SCNPhysicsBodyType.kinematic, shape: nil)
+                    node.physicsBody?.categoryBitMask = 1
+                    node.physicsBody?.collisionBitMask = 1
+                    node.physicsBody?.contactTestBitMask = 1
                     sceneView.scene.rootNode.addChildNode(node)
                 }
             }
@@ -124,11 +139,17 @@ class ViewController: UIViewController, ARSCNViewDelegate {
 
         print(pov.position)
         
-        if pov.position.y > 0.15 && deltaPosition.y > 0 {
-            print("play audio")
-            let audio = SCNAudioPlayer.init(source: testAudioSource)
-            pov.addAudioPlayer(audio)
-        }
+//        if pov.position.y > 0.15 && deltaPosition.y > 0 {
+//            let audio = SCNAudioPlayer.init(source: testAudioSource)
+//            pov.addAudioPlayer(audio)
+//        }
         
+    }
+    
+    func physicsWorld(_ world: SCNPhysicsWorld, didBegin contact: SCNPhysicsContact) {
+        print("contact")
+        
+        let audio = SCNAudioPlayer.init(source: testAudioSource)
+        sceneView.pointOfView?.addAudioPlayer(audio)
     }
 }
