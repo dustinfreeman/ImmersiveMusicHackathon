@@ -43,6 +43,26 @@ class ViewController: UIViewController, ARSCNViewDelegate, SCNPhysicsContactDele
         povCollisionSphere.physicsBody?.contactTestBitMask = 1
         povCollisionSphere.name = "povCollisionSphere"
         sceneView.pointOfView?.addChildNode(povCollisionSphere)
+        
+        //"jazz lighting"
+        let lightNode = SCNNode.init()
+        sceneView.scene.rootNode.addChildNode(lightNode)
+        lightNode.position = SCNVector3(10, 0, 10)
+        lightNode.eulerAngles = SCNVector3(Float.pi, 0, 0)
+        let light = SCNLight.init()
+        lightNode.light = light
+        light.type = .directional
+        light.intensity = 1000
+        light.color = UIColor.red
+
+        let lightNode2 = SCNNode.init()
+        sceneView.scene.rootNode.addChildNode(lightNode2)
+        lightNode2.position = SCNVector3(-10, -10, 0)
+        let light2 = SCNLight.init()
+        lightNode2.light = light2
+        light2.type = .directional
+        light2.intensity = 500
+        light2.color = UIColor.white
     }
     
     func randFloat() -> CGFloat {
