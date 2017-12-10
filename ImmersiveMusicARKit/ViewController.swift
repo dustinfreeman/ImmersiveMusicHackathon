@@ -9,6 +9,8 @@
 import UIKit
 import SceneKit
 import ARKit
+import ModelIO
+import SceneKit.ModelIO
 
 class ViewController: UIViewController, ARSCNViewDelegate, SCNPhysicsContactDelegate {
 
@@ -51,11 +53,29 @@ class ViewController: UIViewController, ARSCNViewDelegate, SCNPhysicsContactDele
         return UIColor.init(red: randFloat(), green: randFloat(), blue: randFloat(), alpha: 1)
     }
     
+    func loadSax() -> SCNNode {
+        guard let url = Bundle.main.url(forResource:"art.scnassets/Saxophone_01", withExtension: "obj") else {
+            fatalError("Failed to find model file.")
+        }
+        
+        let asset = MDLAsset.init(url: url)
+        let object = asset.object(at:0)
+//        guard let object = asset.object(at:0) /*as? MDLMesh*/ else {
+//            fatalError("Failed to get mesh from asset.")
+//        }
+        let node = SCNNode(mdlObject: object)
+        node.scale = SCNVector3(0.006, 0.006, 0.006)
+        return node
+//        return SCNNode.init()
+    }
+    
     func addRandomObjs() {
         var lickColours: [UIColor] = []
         for _ in 0..<lickAudioSources.count {
             lickColours.append(randColour())
         }
+        
+        let sax = loadSax()
         
         var lickIndex = 0
         for x in -5...5 {
@@ -67,11 +87,22 @@ class ViewController: UIViewController, ARSCNViewDelegate, SCNPhysicsContactDele
                     }
                     
                     let node = Instrument.init(audioSource: lickAudioSources[lickIndex])
-                    node.geometry = SCNSphere.init(radius: 0.04)
-                    node.geometry?.firstMaterial?.diffuse.contents = lickColours[lickIndex]
+                    
+                    node.geometry = sax.geometry?.copy() as? SCNGeometry
+                    node.scale = sax.scale
+                    node.eulerAngles = SCNVector3(0,Float.pi, 0)
+                    for i in 0..<node.geometry!.materials.count {
+                        node.geometry?.materials[i] = node.geometry?.materials[i].copy() as! SCNMaterial
+                    }
+                    
+                    for m in node.geometry!.materials {
+                        m.diffuse.contents = lickColours[lickIndex]
+                    }
                     let shrink = Float(0.2)
                     node.position = SCNVector3(shrink*Float(x), shrink*Float(y), shrink*Float(z))
-                    node.physicsBody = SCNPhysicsBody.init(type: SCNPhysicsBodyType.kinematic, shape: nil)
+                    let physicsGeometry = SCNSphere.init(radius: CGFloat(node.boundingSphere.radius * node.scale.x))
+                    let physicsShape = SCNPhysicsShape.init(geometry: physicsGeometry, options: nil)
+                    node.physicsBody = SCNPhysicsBody.init(type: SCNPhysicsBodyType.kinematic, shape: physicsShape)
                     node.physicsBody?.categoryBitMask = 1
                     node.physicsBody?.collisionBitMask = 1
                     node.physicsBody?.contactTestBitMask = 1
