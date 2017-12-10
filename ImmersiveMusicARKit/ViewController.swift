@@ -98,8 +98,8 @@ class ViewController: UIViewController, ARSCNViewDelegate, SCNPhysicsContactDele
                     for m in node.geometry!.materials {
                         m.diffuse.contents = lickColours[lickIndex]
                     }
-                    let shrink = Float(0.2)
-                    node.position = SCNVector3(shrink*Float(x), shrink*Float(y), shrink*Float(z))
+                    let shrink = Float(0.15)
+                    node.position = SCNVector3(x, y, z) * shrink
                     let physicsGeometry = SCNSphere.init(radius: CGFloat(node.boundingSphere.radius * node.scale.x))
                     let physicsShape = SCNPhysicsShape.init(geometry: physicsGeometry, options: nil)
                     node.physicsBody = SCNPhysicsBody.init(type: SCNPhysicsBodyType.kinematic, shape: physicsShape)
